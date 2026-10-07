@@ -5,6 +5,21 @@
 
 **在线访问：** https://chenzhuanxin.github.io/free-tools-nav/
 
+## 🎞️ 配套工具：M3U8 影视资源搜索下载器
+
+导航站里的 M3U8 聚合搜索在静态托管下受浏览器跨域限制（只有部分接口允许跨域）。
+如果需要**稳定搜索 + 直接下载**，请用配套的独立桌面工具：
+
+| | |
+|---|---|
+| 📥 **下载** | [M3U8-Downloader-v1.0.1.exe](https://github.com/chenzhuanxin/free-tools-nav/releases/latest)（约 17MB，免安装双击即用） |
+| 📖 **使用说明** | [m3u8-downloader/EXE使用说明.md](m3u8-downloader/EXE%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md) |
+| 💻 **源码** | [m3u8-downloader/](m3u8-downloader/)（Python + HTML，可自行打包） |
+
+**它解决了什么：** 静态网页只能靠公共 CORS 代理转发资源站接口，既不稳定又慢；
+桌面工具由本机后端直接请求，无跨域限制 —— 实测一次搜索 7 个资源站全返回、
+43 分钟剧集 47 秒下完（约 7.3MB/s），并支持 AES-128 自动解密与 ffmpeg 无损转 MP4。
+
 ---
 
 ## 这是什么
