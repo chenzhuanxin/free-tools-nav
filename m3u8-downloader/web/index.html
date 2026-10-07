@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__APP_NAME__</title>
+<style>
+:root{
+  --bg:#f4f6fb; --panel:#ffffff; --line:#e3e8f2; --line2:#eef1f8;
+  --tx:#1c2333; --tx2:#5b6579; --tx3:#8b95a8;
+  --brand:#3d6dff; --brand-soft:#eaf0ff; --brand-dk:#2b55d8;
+  --ok:#12b886; --warn:#f59f00; --err:#e03131; --pink:#ff5c8a;
+  --shadow:0 2px 10px rgba(28,35,51,.06), 0 8px 28px rgba(28,35,51,.06);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--tx);
+  font:15px/1.65 "Microsoft YaHei","PingFang SC","Segoe UI",system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,select{font-family:inherit;font-size:14px}
+button{cursor:pointer}
+
+/* ---------- 顶栏 ---------- */
+.top{
+  position:sticky; top:0; z-index:50;
+  background:linear-gradient(120deg,#3d6dff,#5b7cff 45%,#8a6dff);
+  color:#fff; padding:14px 22px;
+  box-shadow:0 4px 20px rgba(61,109,255,.22);
+}
+.top-in{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1440px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;letter-spacing:.2px}
+.logo .dot{
+  width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.2);
+  display:grid;place-items:center;font-size:16px;backdrop-filter:blur(4px);
+}
+.top .spacer{flex:1}
+.pill{
+  background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.22);
+  padding:5px 11px;border-radius:999px;font-size:12.5px;display:flex;align-items:center;gap:6px;
+}
+.pill b{font-weight:600}
+.pill.ok{background:rgba(18,184,134,.22);border-color:rgba(18,184,134,.4)}
+.pill.no{background:rgba(224,49,49,.2);border-color:rgba(224,49,49,.38)}
+
+/* ---------- 布局 ---------- */
+.wrap{max-width:1440px;margin:0 auto;padding:20px 22px 70px}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:18px; margin-bottom:16px;
+}
+.card h2{
+  margin:0 0 14px; font-size:15.5px; font-weight:700; color:var(--tx);
+  display:flex;align-items:center;gap:8px;
+}
+.card h2 .bar{width:4px;height:16px;border-radius:2px;background:var(--brand)}
+.card h2 .hint{font-weight:400;font-size:12.5px;color:var(--tx3);margin-left:auto}
+
+/* ---------- 搜索区 ---------- */
+.search-row{display:flex;gap:10px;flex-wrap:wrap}
+.search-row input[type=text]{
+  flex:1;min-width:240px;padding:12px 15px;border:1.5px solid var(--line);
+  border-radius:11px;outline:none;transition:.15s;background:#fbfcfe;font-size:15px;
+}
+.search-row input[type=text]:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px var(--brand-soft)}
+.btn{
+  border:none;border-radius:11px;padding:12px 22px;font-weight:600;
+  background:var(--brand);color:#fff;transition:.15s;display:inline-flex;
+  align-items:center;gap:7px;white-space:nowrap;
+}
+.btn:hover{background:var(--brand-dk);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{background:#f2f5fc;color:var(--tx2);border:1px solid var(--line)}
+.btn.ghost:hover{background:#e8edfa;color:var(--tx)}
+.btn.sm{padding:7px 13px;font-size:13px;border-radius:9px}
+.btn.ok{background:var(--ok)}
+.btn.ok:hover{background:#0ca678}
+.btn.err{background:var(--err)}
+.btn.err:hover{background:#c92a2a}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.hot{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.hot .lb{font-size:12.5px;color:var(--tx3)}
+.chip{
+  background:#f2f5fc;border:1px solid var(--line);border-radius:999px;
+  padding:4px 12px;font-size:12.5px;color:var(--tx2);transition:.15s;
+}
+.chip:hover{background:var(--brand-soft);border-color:#c9d8ff;color:var(--brand-dk)}
+
+/* 资源站选择 */
+.srcs{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px dashed var(--line)}
+.srcs .lb{font-size:12.5px;color:var(--tx3);margin-right:3px;align-self:center}
+.src-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+  font-size:12.5px;color:var(--tx2);background:#fff;transition:.15s;user-select:none;
+}
+.src-chip.on{background:var(--brand-soft);border-color:#b9ccff;color:var(--brand-dk);font-weight:600}
+.src-chip.off{opacity:.5}
+.src-chip .nk{font-size:11px;color:var(--tx3)}
+
+/* ---------- 统计 ---------- */
+.stats{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.stat{display:flex;align-items:baseline;gap:6px}
+.stat b{font-size:21px;font-weight:700;color:var(--brand)}
+.stat span{font-size:12.5px;color:var(--tx3)}
+
+/* ---------- 结果表 ---------- */
+.tb-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px;max-height:62vh}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px;min-width:960px}
+thead th{
+  position:sticky;top:0;z-index:2;background:#f7f9fd;color:var(--tx2);
+  font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);
+  white-space:nowrap;font-size:13px;
+}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+tbody tr:hover{background:#fafbff}
+tbody tr:last-child td{border-bottom:none}
+.tag{
+  display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;
+  background:#f2f5fc;color:var(--tx2);border:1px solid var(--line);white-space:nowrap;
+}
+.tag.src{background:var(--brand-soft);color:var(--brand-dk);border-color:#ccdaff;font-weight:600}
+.tag.ep{background:#e8fbf3;color:#0b7a5b;border-color:#c4f0e0}
+.mono{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:12px;color:var(--tx2);
+  word-break:break-all;max-width:330px;display:inline-block}
+.title-cell{font-weight:600;color:var(--tx)}
+.sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* 展开的剧集 */
+.eps{margin-top:9px;background:#fafbff;border:1px solid var(--line2);border-radius:9px;padding:9px 10px}
+.eps .ln{font-size:12px;color:var(--tx3);margin:4px 0 6px;font-weight:600}
+.ep-list{display:flex;gap:6px;flex-wrap:wrap}
+.ep{
+  background:#fff;border:1px solid var(--line);border-radius:7px;
+  padding:4px 10px;font-size:12.5px;color:var(--tx2);transition:.12s;max-width:230px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.ep:hover{background:var(--brand-soft);border-color:#c9d8ff;color:var(--brand-dk)}
+.ep.dl{background:var(--brand);border-color:var(--brand);color:#fff}
+.ep.dl:hover{background:var(--brand-dk)}
+
+/* ---------- 下载队列 ---------- */
+.task{
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  margin-bottom:10px;background:#fff;transition:.15s;
+}
+.task:hover{border-color:#cfd9ee}
+.task.running{border-color:#b9ccff;background:linear-gradient(180deg,#f8faff,#fff)}
+.task.done{border-color:#c4f0e0}
+.task.error{border-color:#ffd0d0;background:#fffafa}
+.task.canceled{opacity:.7}
+.t-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.t-name{font-weight:600;font-size:14px;flex:1;min-width:150px;word-break:break-all}
+.t-state{font-size:12px;padding:2px 9px;border-radius:999px;white-space:nowrap;font-weight:600}
+.s-pending,.s-parsing{background:#fff4e0;color:#a86a00}
+.s-downloading{background:var(--brand-soft);color:var(--brand-dk)}
+.s-merging,.s-converting{background:#f0e8ff;color:#6741d9}
+.s-done{background:#e8fbf3;color:#0b7a5b}
+.s-error{background:#ffe8e8;color:#c92a2a}
+.s-canceled{background:#f0f2f6;color:#6b7688}
+.bar-out{height:8px;background:#eef1f8;border-radius:999px;overflow:hidden;margin:10px 0 7px}
+.bar-in{height:100%;border-radius:999px;background:linear-gradient(90deg,#3d6dff,#7b6dff);
+  transition:width .3s ease;min-width:2px}
+.task.done .bar-in{background:linear-gradient(90deg,#12b886,#20c997)}
+.task.error .bar-in{background:var(--err)}
+.t-meta{display:flex;gap:15px;flex-wrap:wrap;font-size:12.5px;color:var(--tx3)}
+.t-meta b{color:var(--tx2);font-weight:600}
+.t-msg{font-size:12.5px;color:var(--tx3);margin-top:5px;word-break:break-all}
+.t-msg.err{color:var(--err)}
+
+/* ---------- 空状态 / 提示 ---------- */
+.empty{text-align:center;padding:44px 18px;color:var(--tx3)}
+.empty .ic{font-size:38px;opacity:.5;margin-bottom:10px}
+.empty p{margin:5px 0;font-size:13.5px}
+.errs{background:#fffafa;border:1px solid #ffd0d0;border-radius:11px;padding:11px 14px;margin-top:12px;font-size:12.5px}
+.errs b{color:var(--err)}
+.errs div{color:var(--tx2);margin-top:3px}
+
+/* ---------- 设置 ---------- */
+.set-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:11px}
+.set-row label{font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:7px}
+.set-row input[type=number],.set-row input[type=text]{
+  padding:7px 11px;border:1.5px solid var(--line);border-radius:9px;outline:none;background:#fbfcfe;
+}
+.set-row input[type=number]{width:80px}
+.set-row input[type=text]{flex:1;min-width:260px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+.set-row input:focus{border-color:var(--brand);background:#fff}
+.sw{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.sw input{appearance:none;width:38px;height:21px;border-radius:999px;background:#d5dbe8;position:relative;transition:.2s;cursor:pointer;flex:none}
+.sw input::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw input:checked{background:var(--brand)}
+.sw input:checked::after{transform:translateX(17px)}
+
+/* ---------- 目录行 ---------- */
+.dirln{display:flex;gap:9px;align-items:center;font-size:12.5px;color:var(--tx3);margin-top:11px;flex-wrap:wrap}
+.dirln code{background:#f2f5fc;border:1px solid var(--line);border-radius:7px;padding:4px 9px;
+  font-family:ui-monospace,Consolas,monospace;color:var(--tx2);word-break:break-all}
+
+/* ---------- 页脚 ---------- */
+footer{text-align:center;padding:26px 20px 34px;color:var(--tx3);font-size:13px}
+footer b{color:var(--tx2)}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(24px);
+  background:#1c2333;color:#fff;padding:11px 20px;border-radius:11px;font-size:13.5px;
+  opacity:0;transition:.28s;pointer-events:none;z-index:999;box-shadow:0 8px 30px rgba(0,0,0,.28);max-width:80vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 滚动条 */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#ccd4e4;border-radius:6px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#aab6cd;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="top-in">
+    <div class="logo"><span class="dot">🎞️</span><span>__APP_NAME__</span></div>
+    <div class="spacer"></div>
+    <div class="pill" id="pill-aes">🔐 <b>AES</b> 检测中…</div>
+    <div class="pill" id="pill-ff">🎬 <b>ffmpeg</b> 检测中…</div>
+    <div class="pill">v__APP_VER__</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ 搜索 ============ -->
+  <div class="card">
+    <h2><span class="bar"></span>搜索资源<span class="hint" id="src-hint"></span></h2>
+    <div class="search-row">
+      <input type="text" id="wd" placeholder="输入剧名 / 电影名，例如：庆余年" autocomplete="off">
+      <button class="btn" id="btn-search">🔍 全网搜索</button>
+      <button class="btn ghost" id="btn-clear">清空</button>
+    </div>
+    <div class="hot">
+      <span class="lb">热门：</span>
+      <span class="chip" data-hot="庆余年">庆余年</span>
+      <span class="chip" data-hot="繁花">繁花</span>
+      <span class="chip" data-hot="琅琊榜">琅琊榜</span>
+      <span class="chip" data-hot="三体">三体</span>
+      <span class="chip" data-hot="狂飙">狂飙</span>
+      <span class="chip" data-hot="甄嬛传">甄嬛传</span>
+    </div>
+    <div class="srcs" id="srcs"><span class="lb">资源站：</span></div>
+  </div>
+
+  <!-- ============ 设置 ============ -->
+  <div class="card">
+    <h2><span class="bar"></span>下载设置<span class="hint">修改后立即生效</span></h2>
+    <div class="set-row">
+      <label>并发线程 <input type="number" id="opt-workers" value="16" min="1" max="64"></label>
+      <label class="sw"><input type="checkbox" id="opt-ffmpeg" checked> 用 ffmpeg 转 MP4</label>
+      <label class="sw"><input type="checkbox" id="opt-mp4" checked> 下载后自动转换</label>
+    </div>
+    <div class="set-row">
+      <label style="flex:1">ffmpeg 路径
+        <input type="text" id="opt-ffpath" placeholder="留空自动查找；也可粘贴 ffmpeg.exe 的完整路径">
+      </label>
+      <button class="btn ghost sm" id="btn-ffsave">保存路径</button>
+    </div>
+    <div class="dirln">📁 下载目录：<code id="out-dir">—</code>
+      <button class="btn ghost sm" id="btn-open-dir">打开目录</button>
+    </div>
+  </div>
+
+  <!-- ============ 结果 ============ -->
+  <div class="card">
+    <h2><span class="bar"></span>搜索结果
+      <span class="hint" id="res-hint">尚未搜索</span>
+    </h2>
+    <div class="stats" id="stats" style="display:none">
+      <div class="stat"><b id="st-total">0</b><span>条资源</span></div>
+      <div class="stat"><b id="st-src">0</b><span>个资源站</span></div>
+      <div class="stat"><b id="st-ep">0</b><span>个剧集链接</span></div>
+      <div class="spacer" style="flex:1"></div>
+      <button class="btn ghost sm" id="btn-xlsx">📊 导出 Excel</button>
+      <button class="btn ghost sm" id="btn-csv">📄 导出 CSV</button>
+      <button class="btn ghost sm" id="btn-json">🧾 导出 JSON</button>
+    </div>
+    <div class="errs" id="errs" style="display:none"></div>
+    <div id="res-box">
+      <div class="empty">
+        <div class="ic">🔍</div>
+        <p>输入关键词后点击「全网搜索」</p>
+        <p style="font-size:12.5px">将同时查询多个资源站，聚合 m3u8 播放地址</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 下载队列 ============ -->
+  <div class="card">
+    <h2><span class="bar"></span>下载队列
+      <span class="hint" id="q-hint">暂无任务</span>
+    </h2>
+    <div id="tasks">
+      <div class="empty"><div class="ic">⬇️</div><p>点击资源里的剧集即可开始下载</p></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  设计：<b>__AUTHOR__</b>　微信：<b>__WECHAT__</b>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+let CFG = { sources: [] };
+let CUR = [];              // 当前搜索结果
+let PICKED = new Set();    // 选中的资源站 id
+let POLL = null;
+
+/* ---------------- 通用 ---------------- */
+function toast(msg, ms) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove("show"), ms || 2400);
+}
+
+async function getJSON(url) {
+  const r = await fetch(url);
+  const txt = await r.text();
+  try { return JSON.parse(txt); }
+  catch (e) { throw new Error("服务返回异常：" + txt.slice(0, 120)); }
+}
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast("已复制到剪贴板");
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast("已复制到剪贴板"); }
+    catch (e2) { toast("复制失败，请手动选择"); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---------------- 初始化 ---------------- */
+async function init() {
+  try {
+    CFG = await getJSON("/api/config");
+  } catch (e) {
+    toast("无法连接本地服务：" + e.message, 5000);
+    return;
+  }
+  // 顶部状态
+  const aes = $("#pill-aes");
+  aes.innerHTML = "🔐 <b>AES</b> " + (CFG.aes_backend === "pure-python" ? "纯Python" : CFG.aes_backend);
+  aes.classList.add("ok");
+
+  const ff = $("#pill-ff");
+  if (CFG.ffmpeg) {
+    ff.innerHTML = "🎬 <b>ffmpeg</b> 已就绪";
+    ff.classList.add("ok");
+    $("#opt-ffpath").value = CFG.ffmpeg;
+  } else {
+    ff.innerHTML = "🎬 <b>ffmpeg</b> 未找到";
+    ff.classList.add("no");
+  }
+
+  $("#out-dir").textContent = CFG.out_dir || "—";
+
+  // 资源站
+  const box = $("#srcs");
+  CFG.sources.forEach(s => {
+    if (s.search !== false) PICKED.add(s.id);
+    const el = document.createElement("span");
+    el.className = "src-chip" + (s.search !== false ? " on" : " off");
+    el.dataset.id = s.id;
+    el.innerHTML = esc(s.name) + (s.search === false ? ' <span class="nk">不支持搜索</span>' : "");
+    if (s.note) el.title = s.note;
+    el.onclick = () => {
+      if (s.search === false) { toast("「" + s.name + "」接口不支持关键词搜索"); return; }
+      if (PICKED.has(s.id)) PICKED.delete(s.id); else PICKED.add(s.id);
+      el.classList.toggle("on", PICKED.has(s.id));
+    };
+    box.appendChild(el);
+  });
+  updateSrcHint();
+}
+
+function updateSrcHint() {
+  $("#src-hint").textContent = "已选 " + PICKED.size + " / " +
+    CFG.sources.filter(s => s.search !== false).length + " 个接口（并发查询）";
+}
+
+/* ---------------- 搜索 ---------------- */
+async function doSearch(wd) {
+  wd = (wd || $("#wd").value || "").trim();
+  if (!wd) { toast("请输入关键词"); return; }
+  $("#wd").value = wd;
+
+  const btn = $("#btn-search");
+  btn.disabled = true; btn.textContent = "⏳ 搜索中…";
+  $("#res-hint").textContent = "正在并发查询资源站…";
+
+  try {
+    const q = new URLSearchParams({ wd: wd });
+    if (PICKED.size) q.set("sources", Array.from(PICKED).join(","));
+    const d = await getJSON("/api/search?" + q.toString());
+    if (!d.ok) throw new Error(d.error || "搜索失败");
+    CUR = d.results || [];
+    renderResults(d);
+  } catch (e) {
+    $("#res-hint").textContent = "搜索出错";
+    $("#res-box").innerHTML = '<div class="empty"><div class="ic">⚠️</div><p>' +
+      esc(e.message) + "</p></div>";
+  } finally {
+    btn.disabled = false; btn.textContent = "🔍 全网搜索";
+  }
+}
+
+function m3u8Of(it) {
+  for (const l of (it.lines || [])) {
+    if (l.episodes && l.episodes.length) return l.episodes[0].url;
+  }
+  return "";
+}
+
+function renderResults(d) {
+  const list = d.results || [];
+  $("#res-hint").textContent = '关键词「' + d.wd + '」共 ' + list.length + ' 条';
+
+  // 统计
+  const srcSet = new Set(), epSum = list.reduce((a, b) => a + (b.ep_count || 0), 0);
+  list.forEach(x => srcSet.add(x.source));
+  $("#stats").style.display = list.length ? "flex" : "none";
+  $("#st-total").textContent = list.length;
+  $("#st-src").textContent = srcSet.size;
+  $("#st-ep").textContent = epSum;
+
+  // 错误
+  const errs = (d.errors || []).filter(e => !/不支持关键词搜索/.test(e.error));
+  if (errs.length) {
+    $("#errs").style.display = "block";
+    $("#errs").innerHTML = "<b>⚠️ " + errs.length + " 个接口未返回数据：</b>" +
+      errs.map(e => "<div>· " + esc(e.source) + "：" + esc(e.error) + "</div>").join("");
+  } else {
+    $("#errs").style.display = "none";
+  }
+
+  if (!list.length) {
+    $("#res-box").innerHTML = '<div class="empty"><div class="ic">🫙</div>' +
+      "<p>没有找到「" + esc(d.wd) + "」的资源</p>" +
+      "<p style='font-size:12.5px'>换个关键词，或多选几个资源站再试</p></div>";
+    return;
+  }
+
+  const rows = list.map((it, i) => {
+    const url = m3u8Of(it);
+    const meta = [it.type, it.area, it.year].filter(Boolean).join(" · ") || "—";
+    return `
+    <tr data-idx="${i}">
+      <td>${i + 1}</td>
+      <td>
+        <div class="title-cell">${esc(it.title) || "(无标题)"}</div>
+        <div class="sub">${esc(meta)}${it.remark ? " · " + esc(it.remark) : ""}</div>
+      </td>
+      <td><span class="tag">${esc(it.type) || "—"}</span></td>
+      <td>${esc(it.area) || "—"}</td>
+      <td>${esc(it.year) || "—"}</td>
+      <td><span class="tag ep">${it.ep_count || 0} 集</span></td>
+      <td><span class="tag src">${esc(it.source)}</span></td>
+      <td><span class="mono" title="${esc(url)}">${esc(url) || "—"}</span></td>
+      <td>
+        <div class="acts">
+          <button class="btn sm" data-act="eps" data-idx="${i}">剧集</button>
+          <button class="btn ghost sm" data-act="copy" data-idx="${i}">复制</button>
+          <button class="btn ghost sm" data-act="parse" data-idx="${i}">检测</button>
+        </div>
+      </td>
+    </tr>
+    <tr class="eps-row" data-eps="${i}" style="display:none"><td colspan="9"></td></tr>`;
+  }).join("");
+
+  $("#res-box").innerHTML = `
+    <div class="tb-wrap">
+      <table>
+        <thead><tr>
+          <th style="width:52px">序号</th><th style="min-width:200px">剧名</th>
+          <th>类型</th><th>地区</th><th>年代</th><th>集数</th>
+          <th>资源站</th><th style="min-width:220px">m3u8 链接</th><th style="width:200px">操作</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* 事件委托：结果表 */
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-act]");
+  if (b) {
+    const i = +b.dataset.idx;
+    const it = CUR[i];
+    if (!it) return;
+    const act = b.dataset.act;
+    if (act === "copy") {
+      const u = m3u8Of(it);
+      if (!u) { toast("该资源没有 m3u8 链接"); return; }
+      copyText(u);
+    } else if (act === "parse") {
+      const u = m3u8Of(it);
+      if (!u) { toast("该资源没有 m3u8 链接"); return; }
+      b.disabled = true; b.textContent = "检测中";
+      try {
+        const r = await getJSON("/api/parse?url=" + encodeURIComponent(u));
+        if (r.ok) {
+          toast("✅ 有效：" + r.count + " 个分片" + (r.encrypted ? "（AES 加密）" : "") +
+                "，时长约 " + Math.round(r.duration / 60) + " 分钟", 4200);
+        } else {
+          toast("❌ 检测失败：" + r.error, 4200);
+        }
+      } catch (err) { toast("❌ " + err.message, 4200); }
+      b.disabled = false; b.textContent = "检测";
+    } else if (act === "eps") {
+      toggleEps(b, i);
+    }
+    return;
+  }
+  // 剧集按钮
+  const ep = e.target.closest("button.ep");
+  if (ep) {
+    const i = +ep.dataset.idx, li = +ep.dataset.line, ei = +ep.dataset.ep;
+    const it = CUR[i];
+    if (!it || !it.lines[li] || !it.lines[li].episodes[ei]) return;
+    const target = it.lines[li].episodes[ei];
+    const nm = it.title + " - " + target.name;
+    startDownload(nm, target.url, ep);
+    return;
+  }
+});
+
+function toggleEps(btn, i) {
+  const row = document.querySelector('tr.eps-row[data-eps="' + i + '"]');
+  if (!row) return;
+  const td = row.firstElementChild;
+  if (row.style.display === "none") {
+    const it = CUR[i];
+    td.innerHTML = (it.lines || []).map((l, li) => `
+      <div class="eps">
+        <div class="ln">${esc(l.line || ("线路" + (li + 1)))}（${l.episodes.length} 集）</div>
+        <div class="ep-list">
+          ${l.episodes.map((ep, ei) =>
+            `<button class="ep" data-idx="${i}" data-line="${li}" data-ep="${ei}"
+                     title="${esc(ep.url)}">${esc(ep.name)}</button>`).join("")}
+        </div>
+      </div>`).join("") || '<div class="eps">该资源没有可用的 m3u8 剧集</div>';
+    row.style.display = "";
+    btn.textContent = "收起";
+  } else {
+    row.style.display = "none";
+    btn.textContent = "剧集";
+  }
+}
+
+/* ---------------- 下载 ---------------- */
+async function startDownload(name, url, btn) {
+  const q = new URLSearchParams({
+    name: name, url: url,
+    workers: $("#opt-workers").value || 16,
+    ffmpeg: $("#opt-ffmpeg").checked ? "1" : "0",
+    mp4: $("#opt-mp4").checked ? "1" : "0",
+  });
+  if (btn) { btn.disabled = true; btn.classList.add("dl"); }
+  try {
+    const d = await getJSON("/api/download?" + q.toString());
+    if (!d.ok) throw new Error(d.error || "启动失败");
+    toast("已加入下载队列：" + d.name);
+    refreshTasks(true);
+  } catch (e) {
+    toast("❌ " + e.message, 4000);
+    if (btn) btn.disabled = false;
+  }
+}
+
+const STATE_TXT = {
+  pending: "排队中", parsing: "解析中", downloading: "下载中",
+  merging: "合并中", converting: "转封装", done: "已完成",
+  error: "失败", canceled: "已取消",
+};
+
+async function refreshTasks(force) {
+  let d;
+  try { d = await getJSON("/api/tasks"); }
+  catch (e) { return; }
+  const list = (d.tasks || []).slice().reverse();
+  const box = $("#tasks");
+
+  if (!list.length) {
+    box.innerHTML = '<div class="empty"><div class="ic">⬇️</div><p>点击资源里的剧集即可开始下载</p></div>';
+    $("#q-hint").textContent = "暂无任务";
+  } else {
+    const running = list.filter(t => ["pending", "parsing", "downloading", "merging", "converting"].includes(t.state)).length;
+    $("#q-hint").textContent = running ? (running + " 个进行中 / 共 " + list.length + " 个") : ("共 " + list.length + " 个");
+    box.innerHTML = list.map(t => {
+      const cls = t.state;
+      const pct = t.percent || 0;
+      const acts = [];
+      if (["pending", "parsing", "downloading", "merging", "converting"].includes(t.state)) {
+        acts.push('<button class="btn ghost sm" data-t="cancel" data-id="' + t.id + '">取消</button>');
+      }
+      if (t.state === "done" && t.output) {
+        acts.push('<button class="btn ok sm" data-t="open" data-id="' + t.id + '">打开文件</button>');
+      }
+      acts.push('<button class="btn ghost sm" data-t="remove" data-id="' + t.id + '">移除</button>');
+
+      const metas = [];
+      if (t.total) metas.push("<span>分片 <b>" + t.finished + "/" + t.total + "</b></span>");
+      if (t.failed) metas.push("<span>失败 <b>" + t.failed + "</b></span>");
+      if (t.bytes_h && t.bytes_h !== "0 B") metas.push("<span>已下载 <b>" + t.bytes_h + "</b></span>");
+      if (t.speed_h && t.speed_h !== "—") metas.push("<span>速度 <b>" + t.speed_h + "</b></span>");
+      if (t.elapsed) metas.push("<span>用时 <b>" + t.elapsed + "s</b></span>");
+      if (t.resolution) metas.push("<span>画质 <b>" + esc(t.resolution) + "</b></span>");
+
+      const isErr = t.state === "error";
+      return `
+      <div class="task ${cls}">
+        <div class="t-head">
+          <span class="t-name">${esc(t.name)}</span>
+          <span class="t-state s-${cls}">${STATE_TXT[t.state] || t.state}</span>
+          ${acts.join("")}
+        </div>
+        <div class="bar-out"><div class="bar-in" style="width:${isErr ? 100 : pct}%"></div></div>
+        <div class="t-meta">${metas.join("")}</div>
+        <div class="t-msg ${isErr ? "err" : ""}">${esc(t.message || "")}</div>
+      </div>`;
+    }).join("");
+  }
+
+  // 轮询：有进行中的任务就继续
+  const anyRunning = list.some(t => ["pending", "parsing", "downloading", "merging", "converting"].includes(t.state));
+  clearTimeout(POLL);
+  if (anyRunning || force) POLL = setTimeout(refreshTasks, anyRunning ? 700 : 1500);
+}
+
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-t]");
+  if (!b) return;
+  const id = b.dataset.id, act = b.dataset.t;
+  try {
+    if (act === "cancel") { await getJSON("/api/cancel?id=" + id); toast("已取消"); }
+    else if (act === "remove") { await getJSON("/api/remove?id=" + id); }
+    else if (act === "open") {
+      const r = await getJSON("/api/open?id=" + id);
+      toast(r.ok ? "已打开" : (r.error || "打开失败"));
+    }
+    refreshTasks();
+  } catch (err) { toast("操作失败：" + err.message); }
+});
+
+/* ---------------- 导出 ---------------- */
+async function doExport(fmt) {
+  if (!CUR.length) { toast("还没有搜索结果"); return; }
+  const rows = CUR.map(it => ({
+    title: it.title, type: it.type, area: it.area, year: it.year,
+    ep_count: it.ep_count, source: it.source, m3u8: m3u8Of(it),
+    remark: it.remark, updated: it.updated,
+  }));
+  try {
+    const r = await fetch("/api/export", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ format: fmt, wd: $("#wd").value || "搜索结果", rows: rows }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      toast("已导出：" + d.file, 3600);
+      refreshTasks();
+    } else {
+      toast("导出失败：" + (d.error || "未知错误"), 4000);
+    }
+  } catch (e) { toast("导出失败：" + e.message, 4000); }
+}
+
+/* ---------------- 绑定 ---------------- */
+$("#btn-search").onclick = () => doSearch();
+$("#wd").addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+$("#btn-clear").onclick = () => {
+  $("#wd").value = ""; CUR = [];
+  $("#stats").style.display = "none"; $("#errs").style.display = "none";
+  $("#res-hint").textContent = "尚未搜索";
+  $("#res-box").innerHTML = '<div class="empty"><div class="ic">🔍</div>' +
+    "<p>输入关键词后点击「全网搜索」</p></div>";
+};
+$$(".chip[data-hot]").forEach(c => c.onclick = () => doSearch(c.dataset.hot));
+$("#btn-xlsx").onclick = () => doExport("xlsx");
+$("#btn-csv").onclick = () => doExport("csv");
+$("#btn-json").onclick = () => doExport("json");
+$("#btn-open-dir").onclick = async () => {
+  const r = await getJSON("/api/open");
+  toast(r.ok ? "已打开下载目录" : (r.error || "打开失败"));
+};
+$("#btn-ffsave").onclick = async () => {
+  const p = $("#opt-ffpath").value.trim();
+  if (!p) { toast("请填写 ffmpeg.exe 完整路径"); return; }
+  const r = await fetch("/api/ffmpeg_path", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path: p }),
+  }).then(x => x.json());
+  toast(r.ok ? "✅ 已保存 ffmpeg 路径" : ("❌ " + (r.error || "保存失败")), 3600);
+  if (r.ok) {
+    const ff = $("#pill-ff");
+    ff.innerHTML = "🎬 <b>ffmpeg</b> 已就绪";
+    ff.className = "pill ok";
+  }
+};
+
+init();
+refreshTasks();
+
+// 支持 ?wd=xxx 自动搜索（也方便书签直达）
+const q0 = new URLSearchParams(location.search).get("wd");
+if (q0) {
+  $("#wd").value = q0;
+  setTimeout(() => doSearch(q0), 400);
+}
+</script>
+</body>
+</html>
