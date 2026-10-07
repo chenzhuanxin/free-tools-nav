@@ -1,0 +1,15 @@
+{
+  "_comment": "苹果CMS V10 采集接口资源清单。search=false 表示该接口不支持关键词搜索（只能按分类浏览）。",
+  "sources": [
+    { "id": "guangsu",  "name": "光速资源",   "api": "https://api.guangsuapi.com/api.php/provide/vod/from/gsm3u8", "search": true,  "note": "16 路 m3u8 直链，国内 CDN" },
+    { "id": "liangzi",  "name": "量子资源",   "api": "https://cj.lziapi.com/api.php/provide/vod",               "search": true,  "note": "88 路片源，稳定性公认最好" },
+    { "id": "hongniu",  "name": "红牛资源",   "api": "https://hongniuzy2.com/api.php/provide/vod/from/hnm3u8",   "search": true,  "note": "老牌资源站，国内速度快" },
+    { "id": "s360",     "name": "360 资源",   "api": "https://360zyzz.com/api.php/provide/vod",                 "search": true,  "note": "57 路片源，偶发 403" },
+    { "id": "zuida",    "name": "最大资源",   "api": "https://api.zuidapi.com/api.php/provide/vod",             "search": true,  "note": "老牌资源站，片源库庞大" },
+    { "id": "iqiyi",    "name": "爱奇艺资源", "api": "https://iqiyizyapi.com/api.php/provide/vod",              "search": true,  "note": "热剧首发，1080P" },
+    { "id": "jinying",  "name": "金鹰资源",   "api": "http://jyzyapi.com/provide/vod/from/jinyingm3u8",         "search": true,  "note": "29 路片源，低延迟" },
+    { "id": "shandian", "name": "闪电资源",   "api": "http://sdzyapi.com/api.php/provide/vod/from/sdm3u8",      "search": false, "note": "20 路片源，更新快" },
+    { "id": "tianya",   "name": "天涯影视",   "api": "https://tyyszyapi.com/api.php/provide/vod",               "search": false, "note": "JSON/XML 双接口" },
+    { "id": "wushui",   "name": "无水印资源", "api": "https://api.wsyzy.net/api.php/provide/vod/from/wsym3u8",  "search": false, "note": "无水印影视资源" }
+  ]
+}
