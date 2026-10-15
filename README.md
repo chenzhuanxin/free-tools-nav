@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.png" width="120" alt="free-tools-nav"></p>
+
 # 免费工具集 · 全能导航站
 
 > 一站式免费工具导航 · 240 个工具 / 18 个二级分类 / 4 大分类
